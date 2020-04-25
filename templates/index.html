@@ -1,0 +1,47 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+<title>我的个人网站</title>
+</head>
+<body>
+    <nav class="navbar navbar-inverse">
+        <ul class="nav nav-pills">
+          <li role="presentation" class="active"><a href="">首页</a></li>
+          <li role="presentation"><a href="/gupiao/">股票分析</a></li>
+          <li role="presentation"><a href="#">数据爬取</a></li>
+            <li role="presentation" class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                  更多 <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                    <li role="presentation"><a href="#">功能1</a></li>
+                    <li role="presentation"><a href="#">功能2</a></li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+    <div id="main" style="width: 1515px;height:600px; float: left; margin-left: 10px; background-color: gold">
+        <div class="image" style="width: 800px;height:600px; float: left">
+            <img src="{% static 'image/home.jpg' %}" width="800" height="600">
+        </div>
+         <div class="box" style="height: 87%;width: 47%; float: right">
+{#        <div class="page-header">#}
+          <h1 class="text-center">我的个人网页<small>  聂兴昂&赵苗苗</small></h1>
+{#        </div>#}
+             <div id="earth" style="height: 98%;width: 100%"></div>
+          <p class="text-center">是不是很炫酷呀</p>
+         </div>
+    </div>
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/echarts.js' %}"></script>
+    <script src="{% static 'js/echarts-gl.min.js' %}"></script>
+    <script src="{% static 'js/world.js' %}"></script>
+    <script src="{% static 'js/index.js' %}"></script>
+</body>
+</html>
