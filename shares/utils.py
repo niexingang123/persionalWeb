@@ -1,13 +1,5 @@
-import time
-from django.shortcuts import render
 import requests,re
 from selenium import webdriver
-from shares import models
-
-def index(request):
-    context = {}
-    context['hello'] = 'Hello World!'
-    return render(request, 'index.html', context)
 
 # 获取动态cookies
 def get_cookie():
@@ -21,7 +13,7 @@ def get_cookie():
         driver.close()
         return cookie[0]['value']
 
-#获取页面
+#获取页面代码
 def get_page_detail(url,cookie):
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36',
@@ -37,31 +29,40 @@ def get_page_detail(url,cookie):
         print('请求页面失败', url)
         return None
 
-def get_new():
-    num=0
+#获取股票代码
+def get_stocks(url,num,pattern):
     cookie=get_cookie()
-    models.Klins.objects.all().delete()
     stock_codes = []
-    for i in (1, 2):
-        url = 'http://q.10jqka.com.cn/thshy/index/field/199112/order/desc/page/' + str(i) + '/ajax/1/'
-        html = get_page_detail(url,cookie)
-        pattern = r'href="http://q.10jqka.com.cn/thshy/detail/code/(.*?)/".*?target="_blank"'
+    if num:
+        for i in range (1,num):
+            url1 = url.format(str(i))
+            html = get_page_detail(url1,cookie)
+            for stock_code in re.findall(pattern, html):
+                stock_codes.append(stock_code)
+    else:
+        html = get_page_detail(url, cookie)
         for stock_code in re.findall(pattern, html):
             stock_codes.append(stock_code)
-    k_lins = {}
+    return stock_codes
+
+# 获取k线数据
+def get_klins(stock_codes,url,pattern1,pattern2):
+    cookie=get_cookie()
+    stocks_klin=[]
+    num=0
     for stock_code in stock_codes:
-        num+=1
-        if num%20 == 0:
+        num += 1
+        if num%10 == 0:
             cookie = get_cookie()
-        # time.sleep(2)
-        url = 'http://d.10jqka.com.cn/v4/line/bk_' + str(stock_code) + '/01/last.js'
-        html = get_page_detail(url,cookie)
-        ret = re.search('"name":"(.*?)","data"', html)
-        ret1 = re.search('"data":"(.*?)","marketType', html)
-        if ret:
-            name = ret.group(1).encode('utf-8').decode('unicode_escape')
-            datas = ret1.group(1).split(';')
-            stocks = []
+        k_lins = {}
+        url2 = url.format(str(stock_code))
+        html = get_page_detail(url2,cookie)
+        re_name = re.search(pattern1, html)
+        re_data = re.search(pattern2, html)
+        if re_name:
+            name = re_name.group(1).encode('utf-8').decode('unicode_escape')
+            datas = re_data.group(1).split(';')
+            k_data = []
             for data in datas:
                 lins = []
                 lins.append(int(data.split(',')[0].lstrip()))
@@ -69,26 +70,12 @@ def get_new():
                 lins.append(float(data.split(',')[4].lstrip()))
                 lins.append(float(data.split(',')[3].lstrip()))
                 lins.append(float(data.split(',')[2].lstrip()))
-                stocks.append(lins)
-            k_lins[name] = stocks
-            print(stock_code)
-            print(name)
-            print(stocks)
-            models.Klins.objects.create(code=str(stock_code), name=name, data=str(stocks))
+                k_data.append(lins)
+            k_lins["code"] = stock_code
+            k_lins["name"] = name
+            k_lins["data"] = k_data
+            stocks_klin.append(k_lins)
         else:
             print("没匹配到值")
+    return stocks_klin
 
-def gupiao(request):
-    add_time=''
-    if models.Klins.objects.all():
-        add_time = models.Klins.objects.all().first().addtime
-    add_date = str(add_time)[:10]
-    new_date = str(time.strftime('%Y-%m-%d',time.localtime(time.time())))
-    if add_date != new_date:
-        get_new()
-    Dict=models.Klins.objects.all()
-    return render(request, 'gupiao.html', {'Dict': Dict})
-
-def hangye(request):
-    Dict=models.Klins.objects.all()
-    return render(request, 'hangye.html', {'Dict': Dict})

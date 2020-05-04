@@ -6,6 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <script src="{% static 'js/jquery.min.js' %}"></script>
     <title>股票页面</title>
 </head>
 <body>
@@ -24,6 +25,7 @@
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
           <ul class="nav navbar-nav">
               <li role="presentation"><a href="http://q.10jqka.com.cn/thshy/" target ="_blank">行业涨幅</a></li>
+              <li role="presentation"><a href="/gupiao/gainian/" target ="_blank">概念板块</a></li>
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">功能菜单 <span class="caret"></span></a>
               <ul class="dropdown-menu">
@@ -37,9 +39,9 @@
               </ul>
             </li>
           </ul>
-          <form class="navbar-form navbar-left">
+          <form class="navbar-form navbar-left" action="/seach_byname/" method="get">
             <div class="form-group">
-              <input type="text" class="form-control" placeholder="请输入股票代码">
+              <input id="seach_byname" type="text" class="form-control" placeholder="请输入股票名称">
             </div>
             <button type="submit" class="btn btn-default">搜索</button>
           </form>
@@ -59,12 +61,16 @@
         </div>
       </div>
     </nav>
+        <!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+    <div id="box">
+        {% for di in Dict %}
+        <div class="divSetingStr" id="{{ di.code }}" name="{{ di.name }}" tittle="{{ di.data }}" onclick="window.open('http://q.10jqka.com.cn/thshy/detail/code/'+{{ di.code }})">
+        </div>
+        {% endfor %}
+    </div>
 
-    <div id="box"></div>
     <link rel="stylesheet" href="{% static 'css/gupiao.css' %}">
     <script src="{% static 'js/echarts.js' %}"></script>
-    <script src="{% static 'js/jquery.min.js' %}"></script>
-{#    <div id="k_lin" style="width: 720px;height:400px; float: left; margin-left: 40px; background-color: gold"></div>#}
     <script src="{% static 'js/gupiao.js' %}"></script>
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
 </body>
