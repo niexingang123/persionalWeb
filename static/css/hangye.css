@@ -4,14 +4,17 @@
     }
 #box{
         margin:0 auto;
-        width: 1530px;
-        height: 100px;
+        height: auto;
         background-color: #4cae4c;
     }
-.divSetingStr {
-        width: 720px;
+.main {
         height: 400px;
-        display: inline-block;
+        position: relative;
+        float: left;
         margin-left: 10px;
-        background-color: gold
+        background-color: gold;
+        padding: 10px;
+        border: 1px solid #cccccc;
+        box-shadow: 0 0 5px #cccccc;
+        border-radius: 5px;
     }
