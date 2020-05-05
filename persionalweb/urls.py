@@ -9,4 +9,5 @@ urlpatterns = [
     path(r'gupiao/gainian/', views.gainian),
     path(r'seach_byname/', views.seach_byname),
     path(r'hangye/', views.hangye),
+    path(r'hangye_ajax/', views.hangye_ajax),
 ]
