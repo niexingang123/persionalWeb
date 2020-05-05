@@ -1,0 +1,29 @@
+*   {
+    margin: 0px;
+    padding: 0px;
+    }
+#main{
+        margin:0 auto;
+        height: auto;
+    }
+#image {
+        display: inline-block;
+        float: left;
+    }
+#box {
+        padding-right: 10px;
+        display: inline-block;
+        float: left;
+        background-color: #4cae4c;
+        padding: 10px;
+        border: 1px solid #cccccc;
+        box-shadow: 0 0 5px #cccccc;
+        border-radius: 5px;
+
+    }
+#earth{
+        padding: 10px;
+        border: 1px solid #cccccc;
+        box-shadow: 0 0 5px #cccccc;
+        border-radius: 5px;
+    }
