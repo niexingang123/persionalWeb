@@ -10,6 +10,7 @@
 </head>
 <body>
     <nav class="navbar navbar-inverse">
+        <div style="margin-top:3px">
         <ul class="nav nav-pills">
           <li role="presentation" class="active"><a href="">首页</a></li>
           <li role="presentation"><a href="/gupiao/">股票分析</a></li>
@@ -24,19 +25,19 @@
                 </ul>
             </li>
         </ul>
+       </div>
     </nav>
-    <div id="main" style="width: 1515px;height:600px; float: left; margin-left: 10px; background-color: gold">
-        <div class="image" style="width: 800px;height:600px; float: left">
-            <img src="{% static 'image/home.jpg' %}" width="800" height="600">
+    <div id="main">
+        <div id="image">
+            <img id="img" src="{% static 'image/home.jpg' %}">
         </div>
-         <div class="box" style="height: 87%;width: 47%; float: right">
-{#        <div class="page-header">#}
+         <div id="box">
           <h1 class="text-center">我的个人网页<small>  聂兴昂&赵苗苗</small></h1>
-{#        </div>#}
-             <div id="earth" style="height: 98%;width: 100%"></div>
+             <div id="earth"></div>
           <p class="text-center">梦幻的爱情</p>
          </div>
     </div>
+    <link rel="stylesheet" href="{% static 'css/index.css' %}">
     <script src="{% static 'js/jquery.min.js' %}"></script>
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
     <script src="{% static 'js/echarts.js' %}"></script>
