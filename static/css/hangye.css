@@ -1,0 +1,17 @@
+*   {
+    margin: 0px;
+    padding: 0px;
+    }
+#box{
+        margin:0 auto;
+        width: 1530px;
+        height: 100px;
+        background-color: #4cae4c;
+    }
+.divSetingStr {
+        width: 720px;
+        height: 400px;
+        display: inline-block;
+        margin-left: 10px;
+        background-color: gold
+    }
