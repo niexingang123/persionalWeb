@@ -59,15 +59,18 @@ def seach_byname(request):
     return render(request, 'gupiao.html', {'Dict': Dict})
 
 def hangye(request):
-    tock = [];dirc = {}
-    if request.method == "POST":
-        name = request.POST.get('name')
-        print(name)
+    return render(request, 'hangye.html')
+
+def hangye_ajax (request):
+    tock = []
+    if request.method == "GET":
+        name = request.GET.get('name')
         Dict=models.Klins.objects.filter(name__contains=name)
         for dic in Dict:
+            dirc = {}
             dirc['code'] = dic.code
             dirc['name'] = dic.name
             dirc['data'] = dic.data
             tock.append(dirc)
-            # print(dic.name)
-    return render(request, 'gupiao.html', {'Dict': tock})
+    print(tock)
+    return HttpResponse(json.dumps(tock))
