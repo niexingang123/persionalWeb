@@ -8,5 +8,5 @@ urlpatterns = [
     path(r'gupiao/', views.gupiao),
     path(r'gupiao/gainian/', views.gainian),
     path(r'seach_byname/', views.seach_byname),
-    path(r'gupiao/hangye/', views.hangye),
+    path(r'hangye/', views.hangye),
 ]

@@ -1,4 +1,4 @@
-import requests,re
+import requests,re,time
 from selenium import webdriver
 
 # 获取动态cookies
@@ -51,6 +51,7 @@ def get_klins(stock_codes,url,pattern1,pattern2):
     stocks_klin=[]
     num=0
     for stock_code in stock_codes:
+        time.sleep(1)
         num += 1
         if num%10 == 0:
             cookie = get_cookie()
@@ -75,6 +76,7 @@ def get_klins(stock_codes,url,pattern1,pattern2):
             k_lins["name"] = name
             k_lins["data"] = k_data
             stocks_klin.append(k_lins)
+            print(k_lins)
         else:
             print("没匹配到值")
     return stocks_klin

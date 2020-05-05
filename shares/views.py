@@ -1,5 +1,5 @@
-import time
-from django.shortcuts import render
+import time,json
+from django.shortcuts import render,HttpResponse
 from . import models
 from . import utils
 
@@ -51,16 +51,23 @@ def gainian(request):
     return render(request, 'gupiao.html', {'Dict': Dict})
 
 def seach_byname(request):
-    name = request.GET.get('name', '')
-    print("+++++++++++++++++=")
-    print(name)
+    name = request.POST.get('name', '')
     if name:
         Dict=models.Klins.objects.filter(name__contains=name)
     else:
         Dict = models.Klins.objects.filter(flag='hangye')
-    print(Dict)
     return render(request, 'gupiao.html', {'Dict': Dict})
 
 def hangye(request):
-    Dict=models.Klins.objects.all()
-    return render(request, 'hangye.html', {'Dict': Dict})
+    tock = [];dirc = {}
+    if request.method == "POST":
+        name = request.POST.get('name')
+        print(name)
+        Dict=models.Klins.objects.filter(name__contains=name)
+        for dic in Dict:
+            dirc['code'] = dic.code
+            dirc['name'] = dic.name
+            dirc['data'] = dic.data
+            tock.append(dirc)
+            # print(dic.name)
+    return render(request, 'gupiao.html', {'Dict': tock})
