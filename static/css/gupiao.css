@@ -7,5 +7,9 @@
         height: 400px;
         display: inline-block;
         margin-left: 10px;
-        background-color: gold
+        background-color: gold;
+        padding: 10px;
+        border: 1px solid #cccccc;
+        box-shadow: 0 0 5px #cccccc;
+        border-radius: 5px;
     }

@@ -4,14 +4,14 @@
     }
 #main{
         margin:0 auto;
-        height: auto;
+        height: 500px;
     }
 #image {
-        display: inline-block;
+        display: inline-block!important;
         float: left;
     }
 #box {
-        padding-right: 10px;
+        margin-left: 10px;
         display: inline-block;
         float: left;
         background-color: #4cae4c;
