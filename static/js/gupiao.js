@@ -1,13 +1,68 @@
-for (var i=0; i<= document.getElementsByClassName('divSetingStr').length;i++) {
-    var k_name = document.getElementsByClassName('divSetingStr')[i].getAttribute("name");
-    var k_data = eval(document.getElementsByClassName('divSetingStr')[i].getAttribute("tittle"));
-    var myChart = echarts.init(document.getElementsByClassName('divSetingStr')[i]);
+$(function () {
+        var box=document.getElementById('box');
+        var browser_wid=document.documentElement.clientWidth;
+        box.style.cssText='width:'+browser_wid+'px;';
+        var obj = new ScrollImg();
+        obj.fetchImg();
+        obj.scrollEvent();
+
+    });
+    function ScrollImg() {
+        if (window.location.href=='http://127.0.0.1:8000/gupiao/'){
+            this.url='/gupiao_ajax/';
+        }else if (window.location.href=='http://127.0.0.1:8000/gupiao/gainian/'){
+            this.url='/gupiao/gainian_ajax/';
+        }
+        this.NID = 0;
+        this.nids=new Array();
+        this.fetchImg = function () {
+            var that = this;
+            if (!that.nids.includes(that.NID)) {
+                that.nids.push(that.NID);
+                $.ajax({
+                    url: that.url,
+                    type: 'GET',
+                    data: {nid: that.NID},
+                    dataType: 'JSON',
+                    success: function (arg) {
+                        var img_list = arg.data;
+                        $.each(img_list, function (key, value) {
+                            var div = document.createElement('div');
+                            var browser_wid = document.documentElement.clientWidth;
+                            div.style.cssText = 'width:' + (browser_wid - 30) / 2 + 'px;height: 400px ;position: relative;display: inline-block ;float: left;margin-left: 10px;margin-top: 10px;background-color: gold ;padding: 10px;border: 1px solid #cccccc;box-shadow: 0 0 5px #cccccc;border-radius: 5px;';
+                            div_id = "main_" + value.fid;
+                            div.setAttribute("id", div_id);
+                            $('#box').append(div);
+                            drawkins(div_id,value);
+                            if (key + 1 == img_list.length) {
+                                that.NID = value.fid;
+                            }
+                        })
+                    }
+                })
+            }
+        };
+        this.scrollEvent = function () {
+            var that = this;
+            $(window).scroll(function () {
+                var scrollTop = $(window).scrollTop();
+                var winHeight = $(window).height();
+                var docHeight = $(document).height();
+                if ((scrollTop + winHeight) > (docHeight-5)) {
+                    that.fetchImg();
+                }
+            })
+        }
+    }
+    
+function drawkins(div_id,value) {
+    var myChart = echarts.init(document.getElementById(div_id));
     var upColor = '#ec0000';
     var upBorderColor = '#8A0000';
     var downColor = '#00da3c';
     var downBorderColor = '#008F28';
     // 数据意义：开盘(open)，收盘(close)，最低(lowest)，最高(highest)
-    var data0 = splitData(k_data);
+    var data0 = splitData(eval(value.data));
 
     function splitData(rawData) {
         var categoryData = [];
@@ -41,7 +96,7 @@ for (var i=0; i<= document.getElementsByClassName('divSetingStr').length;i++) {
     // 指定图表的配置项和数据
     var option = {
         title: {
-            text: k_name,
+            text: value.name,
             left: 0
         },
         tooltip: {
@@ -230,18 +285,3 @@ for (var i=0; i<= document.getElementsByClassName('divSetingStr').length;i++) {
     myChart.setOption(option);
 }
 
-// function seach_name(){
-//     var name=document.getElementById("seach_byname").value;
-//     $.ajax({
-//     type:'GET',
-//     url:"/seach_byname/",
-//     data:{
-//         'name':name
-//     },
-//     success:function(data){
-//         if(data.status == 'ok'){
-//             alert("success");
-//         }
-//     }
-// })
-// }

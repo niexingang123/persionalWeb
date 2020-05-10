@@ -61,18 +61,13 @@
         </div>
       </div>
     </nav>
-        <!-- 为ECharts准备一个具备大小（宽高）的Dom -->
-    <div id="box">
-        {% for di in Dict %}
-        <div class="divSetingStr" id="{{ di.code }}" name="{{ di.name }}" tittle="{{ di.data }}" onclick="window.open('http://q.10jqka.com.cn/thshy/detail/code/'+{{ di.code }})">
-        </div>
-        {% endfor %}
-    </div>
+
+     <div id="box"></div>
 
     <link rel="stylesheet" href="{% static 'css/gupiao.css' %}">
     <script src="{% static 'js/echarts.js' %}"></script>
+    <script src="{% static 'js/jquery.min.js' %}"></script>
     <script src="{% static 'js/gupiao.js' %}"></script>
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
-    <script src="{% static 'js/jquery.min.js' %}"></script>
 </body>
 </html>
