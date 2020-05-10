@@ -32,6 +32,8 @@ $(function () {
                             div.style.cssText = 'width:' + (browser_wid - 30) / 2 + 'px;height: 400px ;position: relative;display: inline-block ;float: left;margin-left: 10px;margin-top: 10px;background-color: gold ;padding: 10px;border: 1px solid #cccccc;box-shadow: 0 0 5px #cccccc;border-radius: 5px;';
                             div_id = "main_" + value.fid;
                             div.setAttribute("id", div_id);
+                            click_url="'http://q.10jqka.com.cn/thshy/detail/code/"+value.code;
+                            div.setAttribute("onclick", "window.open("+click_url+"')");
                             $('#box').append(div);
                             drawkins(div_id,value);
                             if (key + 1 == img_list.length) {
