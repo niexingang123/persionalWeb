@@ -1,5 +1,9 @@
+*{
+        margin: 0px;
+        padding: 0px;
+}
 #box{
-        margin-left: 20px;
+        /*margin-left: 10px;*/
         width: 1530px;
     }
 .divSetingStr {

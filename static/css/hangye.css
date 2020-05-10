@@ -4,15 +4,17 @@
     }
 #box{
         margin:0 auto;
-        height: auto;
-        background-color: #4cae4c;
+        height: 1000px;
+        /*background-color: #4cae4c;*/
     }
 .main {
-        height: 400px;
+        height: 400px !important;
         position: relative;
+        display: inline-block !important;
         float: left;
         margin-left: 10px;
-        background-color: gold;
+        margin-top: 10px;
+        background-color: gold !important;
         padding: 10px;
         border: 1px solid #cccccc;
         box-shadow: 0 0 5px #cccccc;

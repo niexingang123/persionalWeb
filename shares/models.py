@@ -3,6 +3,7 @@ from django.db import models
 # python manage.py migrate
 class Klins(models.Model):
     id = models.IntegerField(primary_key=True)
+    fid = models.IntegerField()
     code = models.CharField(max_length=10, blank=True, verbose_name="码值")
     name = models.CharField(max_length=50, blank=True, verbose_name="名称")
     data = models.CharField(max_length=50000, blank=True, verbose_name="内容")

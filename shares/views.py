@@ -9,6 +9,12 @@ def index(request):
     return render(request, 'index.html', context)
 
 def gupiao(request):
+    return render(request, 'gupiao.html')
+
+def gupiao_ajax(request):
+    nid = request.GET.get('nid')
+    last_position_id = int(nid) + 9
+    position_id = str(last_position_id)
     add_time=''
     if models.Klins.objects.filter(flag='hangye'):
         add_time = models.Klins.objects.filter(flag='hangye').first().addtime
@@ -24,12 +30,23 @@ def gupiao(request):
         pattern1 = '"name":"(.*?)","data"'
         pattern2 = '"data":"(.*?)","marketType'
         klins=utils.get_klins(stock_codes, url, pattern1, pattern2)
+        nid = 0
         for klin in klins:
-            models.Klins.objects.create(code=klin["code"], name=klin["name"], data=klin["data"], flag='hangye')
-    Dict=models.Klins.objects.filter(flag='hangye')
-    return render(request, 'gupiao.html', {'Dict': Dict})
+            models.Klins.objects.create(fid=nid, code=klin["code"], name=klin["name"], data=klin["data"], flag='hangye')
+            nid += 1
+    ret = {'status': True, 'data': None}
+    image_list = models.Klins.objects.filter(fid__gt=nid, fid__lt=position_id, flag='hangye').values('fid', 'code', 'name', 'data')
+    image_list = list(image_list)
+    ret['data'] = image_list
+    return HttpResponse(json.dumps(ret))
 
 def gainian(request):
+    return render(request, 'gupiao.html')
+
+def gainian_ajax(request):
+    nid = request.GET.get('nid')
+    last_position_id = int(nid) + 9
+    position_id = str(last_position_id)
     add_time=''
     if models.Klins.objects.filter(flag='gainian'):
         add_time = models.Klins.objects.filter(flag='gainian').first().addtime
@@ -45,10 +62,15 @@ def gainian(request):
         pattern1 = '"name":"(.*?)","data"'
         pattern2 = '"data":"(.*?)","marketType'
         klins=utils.get_klins(stock_codes, url, pattern1, pattern2)
+        nid = 0
         for klin in klins:
-            models.Klins.objects.create(code=klin["code"], name=klin["name"], data=klin["data"], flag='gainian')
-    Dict=models.Klins.objects.filter(flag='gainian')
-    return render(request, 'gupiao.html', {'Dict': Dict})
+            models.Klins.objects.create(fid=nid, code=klin["code"], name=klin["name"], data=klin["data"], flag='gainian')
+            nid += 1
+    ret = {'status': True, 'data': None}
+    image_list = models.Klins.objects.filter(fid__gt=nid, fid__lt=position_id, flag='gainian').values('fid', 'code','name', 'data')
+    image_list = list(image_list)
+    ret['data'] = image_list
+    return HttpResponse(json.dumps(ret))
 
 def seach_byname(request):
     name = request.POST.get('name', '')
@@ -62,15 +84,13 @@ def hangye(request):
     return render(request, 'hangye.html')
 
 def hangye_ajax (request):
-    tock = []
-    if request.method == "GET":
-        name = request.GET.get('name')
-        Dict=models.Klins.objects.filter(name__contains=name)
-        for dic in Dict:
-            dirc = {}
-            dirc['code'] = dic.code
-            dirc['name'] = dic.name
-            dirc['data'] = dic.data
-            tock.append(dirc)
-    print(tock)
-    return HttpResponse(json.dumps(tock))
+    nid = request.GET.get('nid')
+    last_position_id = int(nid) + 5
+    position_id = str(last_position_id)
+    print(nid,'>>>>>>position_id', position_id)
+
+    ret = {'status': True, 'data': None}
+    image_list = models.Klins.objects.filter(fid__gt=nid, fid__lt=position_id).values('fid', 'code', 'name', 'data')
+    image_list = list(image_list)
+    ret['data'] = image_list
+    return HttpResponse(json.dumps(ret))
