@@ -50,7 +50,7 @@ $(function () {
                 var scrollTop = $(window).scrollTop();
                 var winHeight = $(window).height();
                 var docHeight = $(document).height();
-                if ((scrollTop + winHeight) > (docHeight-5)) {
+                if ((scrollTop + winHeight) > (docHeight-20)) {
                     that.fetchImg();
                 }
             })
