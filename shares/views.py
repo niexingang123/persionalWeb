@@ -2,6 +2,7 @@ import time,json
 from django.shortcuts import render,HttpResponse
 from . import models
 from . import utils
+from threading import Thread
 
 def index(request):
     context = {}
@@ -10,6 +11,28 @@ def index(request):
 
 def gupiao(request):
     return render(request, 'gupiao.html')
+
+def async_call(fn):
+    def wrapper(*args, **kwargs):
+        Thread(target=fn, args=args, kwargs=kwargs).start()
+    return wrapper
+
+@async_call
+def get_hangyenewdata():
+    url = 'http://q.10jqka.com.cn/thshy/index/field/199112/order/desc/page/{}/ajax/1/'
+    num = 3
+    pattern = r'href="http://q.10jqka.com.cn/thshy/detail/code/(.*?)/".*?target="_blank"'
+    stock_codes = utils.get_stocks(url, num, pattern)
+    url = 'http://d.10jqka.com.cn/v4/line/bk_{}/01/last.js'
+    pattern1 = '"name":"(.*?)","data"'
+    pattern2 = '"data":"(.*?)","marketType'
+    klins = utils.get_klins(stock_codes, url, pattern1, pattern2)
+    models.Klins.objects.filter(flag='hangye').delete()
+    nid = 0
+    for klin in klins:
+        models.Klins.objects.create(fid=nid, code=klin["code"], name=klin["name"], data=klin["data"], flag='hangye')
+        nid += 1
+    print('行业数据已存入数据库')
 
 def gupiao_ajax(request):
     nid = request.GET.get('nid')
@@ -21,19 +44,7 @@ def gupiao_ajax(request):
     add_date = str(add_time)[:10]
     new_date = str(time.strftime('%Y-%m-%d',time.localtime(time.time())))
     if add_date != new_date:
-        models.Klins.objects.filter(flag='hangye').delete()
-        url = 'http://q.10jqka.com.cn/thshy/index/field/199112/order/desc/page/{}/ajax/1/'
-        num = 3
-        pattern = r'href="http://q.10jqka.com.cn/thshy/detail/code/(.*?)/".*?target="_blank"'
-        stock_codes=utils.get_stocks(url,num,pattern)
-        url = 'http://d.10jqka.com.cn/v4/line/bk_{}/01/last.js'
-        pattern1 = '"name":"(.*?)","data"'
-        pattern2 = '"data":"(.*?)","marketType'
-        klins=utils.get_klins(stock_codes, url, pattern1, pattern2)
-        nid = 0
-        for klin in klins:
-            models.Klins.objects.create(fid=nid, code=klin["code"], name=klin["name"], data=klin["data"], flag='hangye')
-            nid += 1
+        get_hangyenewdata()
     ret = {'status': True, 'data': None}
     image_list = models.Klins.objects.filter(fid__gt=nid, fid__lt=position_id, flag='hangye').values('fid', 'code', 'name', 'data')
     image_list = list(image_list)
@@ -42,6 +53,23 @@ def gupiao_ajax(request):
 
 def gainian(request):
     return render(request, 'gupiao.html')
+
+@async_call
+def getgainiandata():
+    url = 'http://q.10jqka.com.cn/gn/'
+    num = None
+    pattern = r'"platecode":"(.*?)","platename":"'
+    stock_codes = utils.get_stocks(url, num, pattern)
+    url = 'http://d.10jqka.com.cn/v4/line/bk_{}/01/last.js'
+    pattern1 = '"name":"(.*?)","data"'
+    pattern2 = '"data":"(.*?)","marketType'
+    klins = utils.get_klins(stock_codes, url, pattern1, pattern2)
+    models.Klins.objects.filter(flag='gainian').delete()
+    nid = 0
+    for klin in klins:
+        models.Klins.objects.create(fid=nid, code=klin["code"], name=klin["name"], data=klin["data"], flag='gainian')
+        nid += 1
+    print('概念数据已存入数据库')
 
 def gainian_ajax(request):
     nid = request.GET.get('nid')
@@ -53,19 +81,7 @@ def gainian_ajax(request):
     add_date = str(add_time)[:10]
     new_date = str(time.strftime('%Y-%m-%d',time.localtime(time.time())))
     if add_date != new_date:
-        models.Klins.objects.filter(flag='gainian').delete()
-        url = 'http://q.10jqka.com.cn/gn/'
-        num = None
-        pattern = r'"platecode":"(.*?)","platename":"'
-        stock_codes=utils.get_stocks(url,num,pattern)
-        url = 'http://d.10jqka.com.cn/v4/line/bk_{}/01/last.js'
-        pattern1 = '"name":"(.*?)","data"'
-        pattern2 = '"data":"(.*?)","marketType'
-        klins=utils.get_klins(stock_codes, url, pattern1, pattern2)
-        nid = 0
-        for klin in klins:
-            models.Klins.objects.create(fid=nid, code=klin["code"], name=klin["name"], data=klin["data"], flag='gainian')
-            nid += 1
+        getgainiandata()
     ret = {'status': True, 'data': None}
     image_list = models.Klins.objects.filter(fid__gt=nid, fid__lt=position_id, flag='gainian').values('fid', 'code','name', 'data')
     image_list = list(image_list)
