@@ -12,6 +12,8 @@ $(function () {
             this.url='/gupiao_ajax/';
         }else if (window.location.href=='http://127.0.0.1:8000/gupiao/gainian/'){
             this.url='/gupiao/gainian_ajax/';
+        }else if (window.location.href=='http://127.0.0.1:8000/gupiao/getevery/'){
+            this.url='/gupiao/getevery_ajax/';
         }
         this.NID = 0;
         this.nids=new Array();
@@ -35,7 +37,13 @@ $(function () {
                             click_url="'http://q.10jqka.com.cn/thshy/detail/code/"+value.code;
                             div.setAttribute("onclick", "window.open("+click_url+"')");
                             $('#box').append(div);
-                            drawkins(div_id,value);
+                            var titles=null;
+                            if (value.industry != undefined){
+                                titles=value.name+','+value.industry+','+value.area;
+                            }else{
+                                titles=value.name
+                            }
+                                drawkins(div_id,value,titles);
                             if (key + 1 == img_list.length) {
                                 that.NID = value.fid;
                             }
@@ -57,7 +65,7 @@ $(function () {
         }
     }
     
-function drawkins(div_id,value) {
+function drawkins(div_id,value,titles) {
     var myChart = echarts.init(document.getElementById(div_id));
     var upColor = '#ec0000';
     var upBorderColor = '#8A0000';
@@ -68,7 +76,7 @@ function drawkins(div_id,value) {
 
     function splitData(rawData) {
         var categoryData = [];
-        var values = []
+        var values = [];
         for (var i = 0; i < rawData.length; i++) {
             categoryData.push(rawData[i].splice(0, 1)[0]);
             values.push(rawData[i])
@@ -98,7 +106,7 @@ function drawkins(div_id,value) {
     // 指定图表的配置项和数据
     var option = {
         title: {
-            text: value.name,
+            text: titles,
             left: 0
         },
         tooltip: {

@@ -1,6 +1,10 @@
-import requests,re,time
+import requests,re,os
 from selenium import webdriver
 import threading
+import tushare as ts
+import pandas as pd
+import numpy as np
+from . import models
 
 # 获取动态cookies
 cookies=[]
@@ -47,9 +51,7 @@ def get_page_detail(url,cookie):
 
 #获取股票代码
 def get_stocks(url,num,pattern):
-    get_more(30)
-    cookie=cookies[-1]
-    cookies.pop()
+    cookie=get_cookie()
     print('cookie:'+cookie)
     stock_codes = []
     if num:
@@ -68,13 +70,15 @@ def get_stocks(url,num,pattern):
 def get_klins(stock_codes,url,pattern1,pattern2):
     stocks_klin=[]
     num=0
+    get_more(20)
     for stock_code in stock_codes:
         cookie = cookies[-1]
-        print('cookie:' + cookie)
         num += 1
         if num%5 == 0:
             cookie = cookies[-1]
-            if len(cookie) == 0:
+            print('cookie:' + cookie)
+            if len(cookies) == 1:
+                print(cookies)
                 get_more(20)
                 cookie = cookies[-1]
             cookies.pop()
@@ -83,7 +87,9 @@ def get_klins(stock_codes,url,pattern1,pattern2):
         html = get_page_detail(url2,cookie)
         re_name = re.search(pattern1, html)
         re_data = re.search(pattern2, html)
-        if len(re_name) == 0:
+        while not re_name:
+            print('重新获取')
+            cookie=get_cookie()
             html = get_page_detail(url2, cookie)
             re_name = re.search(pattern1, html)
             re_data = re.search(pattern2, html)
@@ -93,6 +99,8 @@ def get_klins(stock_codes,url,pattern1,pattern2):
         for data in datas:
             lins = []
             lins.append(int(data.split(',')[0].lstrip()))
+            if not data.split(',')[1]:
+                break
             lins.append(float(data.split(',')[1].lstrip()))
             lins.append(float(data.split(',')[4].lstrip()))
             lins.append(float(data.split(',')[3].lstrip()))
@@ -105,3 +113,69 @@ def get_klins(stock_codes,url,pattern1,pattern2):
         print(k_lins)
     return stocks_klin
 
+def get_morestock():
+    print('开始获取单个股票历时数据')
+    thread_list=[]
+    for i in range(10):
+        thread = threading.Thread(target=getstocksdata)
+        thread_list.append(thread)
+    for t in thread_list:
+        t.setDaemon(True)
+        t.start()
+    for t in thread_list:
+        t.join()
+
+def getcodes():
+    filebasic = 'D:\Python\workspeace\persionalweb\static\csvfile\stockbasic.csv'
+    dfstockbasic = pd.read_csv(filebasic, encoding="utf-8")
+    # dfstockbasic = ts.get_stock_basics()
+    dfstockbasic['tomarket'] = pd.to_numeric(dfstockbasic.timeToMarket)
+    dfstock = dfstockbasic[(dfstockbasic.tomarket <= 20151001)]
+    dfstock['totals'] = pd.to_numeric(dfstock.totals)   #总股本(亿)
+    dfstocks = dfstock[(dfstock.totals >= 30)]
+    codes = []
+    for index, row in dfstocks.iterrows():
+        every={}
+        every['code']='{:0>6}'.format(row['code'])
+        every['name']=row['name']
+        every['totals'] = row['totals']
+        every['industry'] = row['industry']
+        every['area'] = row['area']
+        codes.append(every)
+    return codes
+
+def getstocksdata():
+    datas=getcodes()
+    stocksdata=[]
+    for stockdata in datas:
+        stocks={}
+        shyha = ts.get_hist_data(stockdata['code'])
+        minclose=np.nanmin(shyha.iloc[:200, 1].values)
+        nowprice=shyha.iloc[0]['close']
+        pricediff=round(minclose/nowprice,2)
+        price_change=round(np.sum(shyha.iloc[:5]['price_change']),2)
+        data=[]
+        shyh=shyha.sort_index()
+        for row in shyh.index:
+            oneday = []
+            oneday.append(row)
+            oneday.append(shyh.loc[row, 'open'])
+            oneday.append(shyh.loc[row, 'close'])
+            oneday.append(shyh.loc[row, 'low'])
+            oneday.append(shyh.loc[row, 'high'])
+            data.append(oneday)
+        stocks["code"] = stockdata['code']
+        stocks["name"] = stockdata['name']
+        stocks["industry"] = stockdata['industry']
+        stocks["area"] = stockdata['area']
+        stocks["totals"] = stockdata['totals']
+        stocks["price_change"] = price_change
+        stocks["pricediff"] = pricediff
+        stocks["data"] = data
+        if 10>price_change>0:
+            stocksdata.append(stocks)
+            print(minclose)
+            print(nowprice)
+            print(stocks)
+    stocksdata.sort(key=lambda x: x["pricediff"])
+    return stocksdata
