@@ -126,9 +126,9 @@ def get_morestock():
         t.join()
 
 def getcodes():
-    filebasic = 'D:\Python\workspeace\persionalweb\static\csvfile\stockbasic.csv'
-    dfstockbasic = pd.read_csv(filebasic, encoding="utf-8")
-    # dfstockbasic = ts.get_stock_basics()
+    # filebasic = 'D:\Python\workspeace\persionalweb\static\csvfile\stockbasic.csv'
+    # dfstockbasic = pd.read_csv(filebasic, encoding="utf-8")
+    dfstockbasic = ts.get_stock_basics()
     dfstockbasic['tomarket'] = pd.to_numeric(dfstockbasic.timeToMarket)
     dfstock = dfstockbasic[(dfstockbasic.tomarket <= 20151001)]
     dfstock['totals'] = pd.to_numeric(dfstock.totals)   #总股本(亿)
@@ -136,7 +136,7 @@ def getcodes():
     codes = []
     for index, row in dfstocks.iterrows():
         every={}
-        every['code']='{:0>6}'.format(row['code'])
+        every['code']=index
         every['name']=row['name']
         every['totals'] = row['totals']
         every['industry'] = row['industry']
