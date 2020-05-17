@@ -2,6 +2,8 @@ $(function () {
         var divs=document.getElementsByClassName('main');
         if (divs.length==0){
             alert('没有找到要搜索的内容');
+            window.location.href = document.referrer;
+            window.history.back(-1);
         }else{
         for (var i = 0; i < divs.length; i++) {
             var browser_wid = document.documentElement.clientWidth;
