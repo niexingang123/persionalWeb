@@ -8,13 +8,16 @@ import os,datetime
 def getcodes():
     filebasic = '../static/csvfile/stockbasic.csv'
     dfstockbasic = pd.read_csv(filebasic, encoding="utf-8")
+    # print(dfstockbasic)
+    dfstockbasic = ts.get_stock_basics()
+    print(dfstockbasic)
     dfstockbasic['tomarket'] = pd.to_numeric(dfstockbasic.timeToMarket)
     dflateststock = dfstockbasic[(dfstockbasic.tomarket <= 20151001)]
     codes = []
     for index, row in dflateststock.iterrows():
         every = {}
         # code='{:0>6}'.format(row['code'])
-        every['code'] = '{:0>6}'.format(row['code'])
+        every['code'] = index
         every['name'] = row['name']
         codes.append(every)
         # codes.append(code)

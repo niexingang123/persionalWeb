@@ -64,7 +64,15 @@ $(function () {
             })
         }
     }
-    
+
+function upload_method() {
+    if (window.location.href=='http://127.0.0.1:8000/gupiao/' || window.location.href=='http://127.0.0.1:8000/gupiao/gainian/'){
+        document.form1.action='/seach_byname/';
+    }else if (window.location.href=='http://127.0.0.1:8000/gupiao/getevery/'){
+        document.form1.action='/seach_bystockname/';
+    }
+}
+
 function drawkins(div_id,value,titles) {
     var myChart = echarts.init(document.getElementById(div_id));
     var upColor = '#ec0000';

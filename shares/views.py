@@ -93,23 +93,16 @@ def seach_byname(request):
     if name:
         Dict=models.Klins.objects.filter(name__contains=name)
     else:
-        Dict = models.Klins.objects.filter(flag='hangye')
-    return render(request, 'gupiao.html', {'Dict': Dict})
+        Dict = None
+    return render(request, 'seach_byname.html', {'Dict': Dict})
 
-def hangye(request):
-    return render(request, 'hangye.html')
-
-def hangye_ajax (request):
-    nid = request.GET.get('nid')
-    last_position_id = int(nid) + 5
-    position_id = str(last_position_id)
-    print(nid,'>>>>>>position_id', position_id)
-
-    ret = {'status': True, 'data': None}
-    image_list = models.Klins.objects.filter(fid__gt=nid, fid__lt=position_id).values('fid', 'code', 'name', 'data')
-    image_list = list(image_list)
-    ret['data'] = image_list
-    return HttpResponse(json.dumps(ret))
+def seach_bystockname(request):
+    name = request.POST.get('name', '')
+    if name:
+        Dict=models.Stocks.objects.filter(name__contains=name)
+    else:
+        Dict = None
+    return render(request, 'seach_byname.html', {'Dict': Dict})
 
 def getevery(request):
     return render(request, 'gupiao.html')
